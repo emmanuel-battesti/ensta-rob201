@@ -8,8 +8,6 @@ from my_robot_slam import MyRobotSlam
 
 from worlds.my_world import MyWorld
 
-import random
-    
 if __name__ == '__main__':
     lidar_params = LidarParams()
     lidar_params.noise_enable = True
@@ -28,5 +26,5 @@ if __name__ == '__main__':
     my_world = MyWorld(robot=my_robot)
     simulator = Simulator(the_world=my_world,
                           use_keyboard=False)
-    
+
     simulator.run()

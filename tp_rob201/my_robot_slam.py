@@ -10,7 +10,9 @@ from place_bot.entities.lidar import LidarParams
 
 from tiny_slam import TinySlam
 
-from control import reactive_obst_avoid
+from control import potential_field_control, reactive_obst_avoid
+from occupancy_grid import OccupancyGrid
+from planner import Planner
 
 
 # Definition of our robot controller
@@ -30,11 +32,13 @@ class MyRobotSlam(RobotAbstract):
 
         # Init SLAM object
         self._size_area = (800, 800)
-        self.tiny_slam = TinySlam(x_min=- self._size_area[0],
-                                  x_max=self._size_area[0],
-                                  y_min=- self._size_area[1],
-                                  y_max=self._size_area[1],
-                                  resolution=2)
+        self.occupancy_grid = OccupancyGrid(x_min=- self._size_area[0],
+                                            x_max=self._size_area[0],
+                                            y_min=- self._size_area[1],
+                                            y_max=self._size_area[1],
+                                            resolution=2)
+        self.tiny_slam = TinySlam(self.occupancy_grid)
+        self.planner = Planner(self.occupancy_grid)
 
         # storage for pose after localization
         self.corrected_pose = np.array([0, 0, 0])
@@ -43,6 +47,14 @@ class MyRobotSlam(RobotAbstract):
         """
         Main control function executed at each time step
         """
+        return self.control_tp1()
+
+    def control_tp1(self):
+        # Compute new command speed to perform obstacle avoidance
+        command = reactive_obst_avoid(self.lidar())
+        return command
+
+    def control_tp2(self):
         self.counter += 1
 
         self.tiny_slam.compute()

@@ -50,16 +50,23 @@ class MyRobotSlam(RobotAbstract):
         return self.control_tp1()
 
     def control_tp1(self):
+        """
+        Control function for TP1
+        """
+        self.tiny_slam.compute()
+
         # Compute new command speed to perform obstacle avoidance
         command = reactive_obst_avoid(self.lidar())
         return command
 
     def control_tp2(self):
-        self.counter += 1
-
-        self.tiny_slam.compute()
+        """
+        Control function for TP2
+        """
+        pose = self.odometer_values()
+        goal = [0,0,0]
 
         # Compute new command speed to perform obstacle avoidance
-        command = reactive_obst_avoid(self.lidar())
+        command = potential_field_control(self.lidar(), pose, goal)
 
         return command

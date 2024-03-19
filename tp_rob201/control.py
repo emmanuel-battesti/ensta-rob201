@@ -11,6 +11,7 @@ def reactive_obst_avoid(lidar):
     """
     # TODO for TP1
 
+    laser_dist = lidar.get_sensor_values()
     speed = 0.0
     rotation_speed = 0.0
 

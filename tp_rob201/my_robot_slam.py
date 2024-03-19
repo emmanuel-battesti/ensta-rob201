@@ -31,12 +31,16 @@ class MyRobotSlam(RobotAbstract):
         self.counter = 0
 
         # Init SLAM object
-        self._size_area = (800, 800)
-        self.occupancy_grid = OccupancyGrid(x_min=- self._size_area[0],
-                                            x_max=self._size_area[0],
-                                            y_min=- self._size_area[1],
-                                            y_max=self._size_area[1],
+        # Here we cheat to get an occupancy grid size that's not too large, by using the
+        # robot's starting position and the maximum map size that we shouldn't know.
+        size_area = (1400, 1000)
+        robot_position = (439.0, 195)
+        self.occupancy_grid = OccupancyGrid(x_min=-(size_area[0] / 2 + robot_position[0]),
+                                            x_max=size_area[0] / 2 - robot_position[0],
+                                            y_min=-(size_area[1] / 2 + robot_position[1]),
+                                            y_max=size_area[1] / 2 - robot_position[1],
                                             resolution=2)
+
         self.tiny_slam = TinySlam(self.occupancy_grid)
         self.planner = Planner(self.occupancy_grid)
 
@@ -52,6 +56,7 @@ class MyRobotSlam(RobotAbstract):
     def control_tp1(self):
         """
         Control function for TP1
+        Control funtion with minimal random motion
         """
         self.tiny_slam.compute()
 
@@ -62,6 +67,7 @@ class MyRobotSlam(RobotAbstract):
     def control_tp2(self):
         """
         Control function for TP2
+        Main control function with full SLAM, random exploration and path planning
         """
         pose = self.odometer_values()
         goal = [0,0,0]

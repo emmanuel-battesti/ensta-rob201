@@ -1,3 +1,8 @@
+"""
+Planner class
+Implementation of A*
+"""
+
 import numpy as np
 
 from occupancy_grid import OccupancyGrid

@@ -1,7 +1,5 @@
 /env
 /docs
-src/place_bot/tools/generated_code.py
-src/place_bot/various
 __pycache__
 *.profile
 *.calltree

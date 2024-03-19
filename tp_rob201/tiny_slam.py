@@ -2,7 +2,6 @@
 
 import cv2
 import numpy as np
-
 from occupancy_grid import OccupancyGrid
 
 

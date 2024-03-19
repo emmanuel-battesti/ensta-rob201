@@ -1,12 +1,15 @@
+"""
+Occupancy grid class
+Includes initialisation, raytracing, display...
+"""
+
 import pickle
 
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
-import heapq
-import math
-from collections import defaultdict
-import copy
+
+VIDEO_OUT = False
 
 
 class OccupancyGrid:
@@ -25,6 +28,12 @@ class OccupancyGrid:
 
         self.occupancy_map = np.zeros(
             (int(self.x_max_map), int(self.y_max_map)))
+
+        if VIDEO_OUT:
+            self.cv_out = cv2.VideoWriter('rob201.avi',
+                                          cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'),
+                                          7,
+                                          (self.x_max_map, self.y_max_map))
 
     def conv_world_to_map(self, x_world, y_world):
         """
@@ -59,7 +68,7 @@ class OccupancyGrid:
 
         return x_world, y_world
 
-    def add_map_line(self, x_0, y_0, x_1, y_1, val):
+    def add_value_along_line(self, x_0: float, y_0: float, x_1: float, y_1: float, val):
         """
         Add a value to a line of points using Bresenham algorithm, input in world coordinates
         x_0, y_0 : starting point coordinates in m
@@ -78,9 +87,9 @@ class OccupancyGrid:
             return
 
         # Bresenham line drawing
-        dx = x_end - x_start
-        dy = y_end - y_start
-        is_steep = abs(dy) > abs(dx)  # determine how steep the line is
+        d_x = x_end - x_start
+        d_y = y_end - y_start
+        is_steep = abs(d_y) > abs(d_x)  # determine how steep the line is
         if is_steep:  # rotate line
             x_start, y_start = y_start, x_start
             x_end, y_end = y_end, x_end
@@ -88,9 +97,9 @@ class OccupancyGrid:
         if x_start > x_end:
             x_start, x_end = x_end, x_start
             y_start, y_end = y_end, y_start
-        dx = x_end - x_start  # recalculate differentials
-        dy = y_end - y_start  # recalculate differentials
-        error = int(dx / 2.0)  # calculate error
+        d_x = x_end - x_start  # recalculate differentials
+        d_y = y_end - y_start  # recalculate differentials
+        error = int(d_x / 2.0)  # calculate error
         y_step = 1 if y_start < y_end else -1
         # iterate over bounding box generating points between start and end
         y = y_start
@@ -98,10 +107,10 @@ class OccupancyGrid:
         for x in range(x_start, x_end + 1):
             coord = [y, x] if is_steep else [x, y]
             points.append(coord)
-            error -= abs(dy)
+            error -= abs(d_y)
             if error < 0:
                 y += y_step
-                error += dx
+                error += d_x
         points = np.array(points).T
 
         # add value to the points
@@ -161,32 +170,35 @@ class OccupancyGrid:
         img = img - img.min()
         img = img / img.max() * 255
         img = np.uint8(img)
-        img2 = cv2.applyColorMap(src=img, colormap=cv2.COLORMAP_JET)
+        img_color = cv2.applyColorMap(src=img, colormap=cv2.COLORMAP_JET)
 
         if traj is not None:
-            traj_map_x, traj_map_y = self.conv_world_to_map(traj[0, :], -traj[1, :])
-            traj_map = np.vstack((traj_map_x, traj_map_y))
+            traj_map_x, traj_map_y = self.conv_world_to_map(traj[0, :], traj[1, :])
+            traj_map = np.vstack((traj_map_x, self.y_max_map - traj_map_y))
             for i in range(len(traj_map_x) - 1):
-                cv2.line(img2, traj_map[:, i], traj_map[:, i + 1], (180, 180, 180), 2)
+                cv2.line(img_color, traj_map[:, i], traj_map[:, i + 1], (180, 180, 180), 2)
 
         if goal is not None:
-            pt_x, pt_y = self.conv_world_to_map(goal[0], -goal[1])
-            pt = (int(pt_x), int(pt_y))
+            pt_x, pt_y = self.conv_world_to_map(goal[0], goal[1])
+            point = (int(pt_x), self.y_max_map - int(pt_y))
             color = (255, 255, 255)
-            cv2.circle(img2, pt, 3, color, -1)
+            cv2.circle(img_color, point, 3, color, -1)
 
         pt2_x = robot_pose[0] + np.cos(robot_pose[2]) * 20
         pt2_y = robot_pose[1] + np.sin(robot_pose[2]) * 20
-        pt2_x, pt2_y = self.conv_world_to_map(pt2_x, -pt2_y)
+        pt2_x, pt2_y = self.conv_world_to_map(pt2_x, pt2_y)
 
-        pt1_x, pt1_y = self.conv_world_to_map(robot_pose[0], -robot_pose[1])
+        pt1_x, pt1_y = self.conv_world_to_map(robot_pose[0], robot_pose[1])
 
         # print("robot_pose", robot_pose)
-        pt1 = (int(pt1_x), int(pt1_y))
-        pt2 = (int(pt2_x), int(pt2_y))
-        cv2.arrowedLine(img=img2, pt1=pt1, pt2=pt2,
+        pt1 = (int(pt1_x), self.y_max_map - int(pt1_y))
+        pt2 = (int(pt2_x), self.y_max_map - int(pt2_y))
+        cv2.arrowedLine(img=img_color, pt1=pt1, pt2=pt2,
                         color=(0, 0, 255), thickness=2)
-        cv2.imshow("map slam", img2)
+        cv2.imshow("map slam", img_color)
+        if VIDEO_OUT:
+            self.cv_out.write(img_color)
+
         cv2.waitKey(1)
 
     def save(self, filename):
@@ -209,6 +221,9 @@ class OccupancyGrid:
                          'x_max_world': self.x_max_world,
                          'y_min_world': self.y_min_world,
                          'y_max_world': self.y_max_world}, fid)
+
+        if VIDEO_OUT:
+            self.cv_out.release()
 
     def load(self, filename):
         """

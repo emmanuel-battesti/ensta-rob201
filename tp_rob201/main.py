@@ -22,9 +22,14 @@ if __name__ == '__main__':
     # odometer_params.param3 = 0.04  # 0.04 # degree/meter, influence of translation to rotation
     # odometer_params.param4 = 0.01  # 0.01 # degree/degree, influence of rotation to rotation
 
+    # Using shaders allows you to take advantage of the GPU's computing power. Occasionally, on certain machines,
+    # notably Windows and macOS, the semantic sensor and lidar may behave in unexpected or aberrant ways.
+    # In such cases, you need to disable the shaders.
+    use_shaders = True
+
     my_robot = MyRobotSlam(lidar_params=lidar_params,
                            odometer_params=odometer_params)
-    my_world = MyWorld(robot=my_robot)
+    my_world = MyWorld(robot=my_robot, use_shaders=use_shaders)
     simulator = Simulator(the_world=my_world,
                           use_keyboard=False)
 

@@ -231,3 +231,46 @@ class OccupancyGrid:
         filename : base name (without extension) of file on disk
         """
         # TODO
+
+    def is_occupied(self, x, y):
+        """
+        Retorna True se a célula (x, y) está ocupada (valor > 0) ou se está fora do mapa.
+        """
+        if 0 <= x < self.occupancy_map.shape[0] and 0 <= y < self.occupancy_map.shape[1]:
+            return self.occupancy_map[x, y] > 0
+        return True
+    def get_inflated_map(self, radius: int, threshold: float) -> np.ndarray:
+    # """
+    # Return a copy of the occupancy_map where every cell whose value > threshold
+    # has been 'inflated' by the given radius (in cells). This grows obstacles
+    # so that planning steers well clear of walls.
+    
+    # Args:
+    #     radius:    inflation radius (in number of map cells)
+    #     threshold: any cell with occupancy_map[x,y] > threshold is treated as obstacle
+    
+    # Returns:
+    #     inflated_map: np.ndarray same shape as occupancy_map, where
+    #                     all cells within `radius` of any original obstacle
+    #                     have value > threshold.
+    # """
+        # 1) build a binary obstacle mask
+        obstacle_mask = (self.occupancy_map > threshold).astype(np.uint8)
+        
+        # 2) create a circular structuring element
+        kernel_size = 2 * radius + 1
+        kernel = cv2.getStructuringElement(
+            cv2.MORPH_ELLIPSE,
+            (kernel_size, kernel_size)
+        )
+        
+        # 3) dilate the mask
+        inflated_mask = cv2.dilate(obstacle_mask, kernel)
+        
+        # 4) make a copy of the float occupancy map
+        inflated_map = self.occupancy_map.copy()
+        
+        # 5) set every newly inflated cell to just above threshold
+        inflated_map[inflated_mask > 0] = threshold + 1
+        
+        return inflated_map

@@ -1,78 +1,76 @@
+
 # Table of Content
+- [Table of Content](#table-of-content)
+- [Introduction](#introduction)
+- [Installation on macOs](#installation-on-macos)
+- [Installation on Ubuntu (recommended)](#installation-on-ubuntu-recommended)
+  - [**Warning** for Ubuntu users on VirtualBox](#warning-for-ubuntu-users-on-virtualbox)
+  - [Git and Arcade library dependencies](#git-and-arcade-library-dependencies)
+  - [*Python* installation](#python-installation)
+  - [Virtual environment tools](#virtual-environment-tools)
+  - [Installing this *ensta-rob201* repository](#installing-this-ensta-rob201-repository)
+- [Installation on Windows 10/11 with WSL2](#installation-on-windows-1011-with-wsl2)
+- [Installation on Windows 10/11 with GitBash](#installation-on-windows-1011-with-gitbash)
+  - [**Warning** for Windows users](#warning-for-windows-users)
+  - [*Python* installation](#python-installation-1)
+  - [*Git* installation](#git-installation)
+  - [Configure *Git Bash*](#configure-git-bash)
+  - [Install this *ensta-rob201* repository](#install-this-ensta-rob201-repository)
+- [Troubleshootings](#troubleshootings)
+  - [Tool to view your software versions](#tool-to-view-your-software-versions)
+  - [Find OpenGL version on Ubuntu](#find-opengl-version-on-ubuntu)
+  - [Update Mesa](#update-mesa)
+- [Python IDE](#python-ide)
+- [Contact](#contact)
 
-- [Fast installation on Ubuntu](#fast-installation-on-ubuntu)
-- [Detailed installation on Ubuntu](#detailled-installation-on-ubuntu)
-- [Detailed installation on Windows 10](#detailled-installation-on-windows-10)
+# Introduction
 
-# Fast installation on Ubuntu
+This installation procedure has been successfully tested on **Ubuntu** and **Windows 11 with Git Bash**, but Ubuntu is recommended.
 
-## The first time : install dev tools
+# Installation on macOs
 
-You can use python version 3.8, 3.9 or 3.10.
- 
-```bash
-sudo apt update -y
-sudo apt install -y git libjpeg-dev zlib1g-dev python3 python3-venv python3-dev python3-pip virtualenvwrapper
-```
+Installation on a **macOS system** seems difficult, but is virtually untested and will **not be supported** in the future. *ensta-rob201* requires a recent version of *OpenGL* to work. However, recent versions of macOs no longer use *OpenGL*, but an equivalent library called *Metal*.
 
-## Installation and launch of the code
+In any case, the code has had to be adapted for macOS in the past, resulting in a loss of program performance compared to an Ubuntu machine. (See [Deactivation of OpenGL shaders](#deactivation-of-opengl-shaders))
 
-```bash
-git clone https://github.com/emmanuel-battesti/ensta-rob201.git
-cd ensta-rob201
-python3 -m venv env
-source env/bin/activate
-python3 -m pip install --upgrade pip
-python3 -m pip install -r requirements.txt
-python3 tp_rob201/main.py
-```
+# Installation on Ubuntu (recommended)
 
-# Detailed installation on Ubuntu
+This installation procedure has been tested on Ubuntu 20.04, 22.04 and 24.04.
 
-This installation procedure has been tested with Ubuntu 18.04, 20.04 and 22.04.
+## **Warning** for Ubuntu users on VirtualBox
 
-## Arcade library dependencies
+**Problems have been reported by VirtualBox users**.
 
-First, you will obviously have to use the Git tool.
+*ensta-rob201* uses *OpenGL* via shaders to speed up calculations, and this always seems to be the case. The calculations for emulating the lidar and semantic sensors of the drones are performed, via these shaders, directly on the GPU.
 
-And for the library *Arcade*, you might need to install *libjpeg-dev* and *zlib1g-dev*.
+VirtualBox has a problem with the graphics driver and the way it handles OpenGL.
+
+You have several solutions:
+- Change to Ubuntu operating system without VirtualBox,
+- Use the manipulation described here: [Deactivation of OpenGL shaders](#deactivation-of-opengl-shaders)
+
+## Git and Arcade library dependencies
+
+First, you will obviously have to install the Git tools.
+
+And for the Python library *Arcade*, which is a library for creating 2D arcade games, you may need to install *libjpeg-dev* and *zlib1g-dev*.
 
 ```bash
 sudo apt update
-sudo apt install git libjpeg-dev zlib1g-dev
+sudo apt install git git-gui gitk libjpeg-dev zlib1g-dev
 ```
 
 ## *Python* installation
 
-We need, at least, *Python 3.8*. You can use python version 3.8, 3.9 or 3.10.
-
-- On *Ubuntu 22.04*, the default version of *Python* is 3.10.
-- On *Ubuntu 20.04*, the default version of *Python* is 3.8.
-- On *Ubuntu 18.04*, the default version of *Python* is 2.7.17. And the default version of *Python3* is 3.6.9.
-
-If necessary, it is easy to install *Python* 3.8:
-```bash
-sudo apt update
-sudo apt install python3.8 python3.8-venv python3.8-dev
-```
-
-## *Pip* installation
-
-- Install *Pip*:
+We need, at least, *Python 3.8*, which is the default version of *Python* on *Ubuntu 20.04*.
 
 ```bash
 sudo apt update
-sudo apt install python3-pip
+sudo apt install python3 python3-venv python3-dev python3-pip 
 ```
-
-- When the installation is complete, verify the installation by checking the *Pip* version:
-
+You can verify the version with the command:
 ```bash
-pip3 --version
-```
-For Ubuntu 20.04, it returns :
-```bash
-pip 20.0.2 from /usr/lib/python3/dist-packages/pip (python 3.8)
+python3 --version
 ```
 
 ## Virtual environment tools
@@ -85,33 +83,39 @@ For that, you should install some tools:
 sudo apt update
 sudo apt install virtualenvwrapper
 ```
-## Install this *ensta-rob201* repository
+
+## Installing this *ensta-rob201* repository
 
 - To install this git repository, go to the directory you want to work in (for example: *~/code/*).
-
-- Git-clone the code of [*ensta-rob201*](https://github.com/emmanuel-battesti/ensta-rob201):
+- With your terminal, you have to use those Linux commands, for example:
+```bash
+cd
+mkdir code
+cd code
+```
+- Git-clone the code from [*ensta-rob201*](https://github.com/emmanuel-battesti/ensta-rob201):
 
 ```bash
 git clone https://github.com/emmanuel-battesti/ensta-rob201.git
 ```
 This command will create the directory *ensta-rob201* with all the code inside it.
 
-- Create your virtual environment. This command will create a directory *env* where all dependencies will be installed:
+- Create your virtual environment. This command will create a *.venv* directory where all dependencies will be installed:
 
 ```bash
 cd ensta-rob201
-python3 -m venv env
+python3 -m venv .venv
 ```
 
-- To use this newly create virtual environment, as each time you need it, use the command:
+- To use this newly created virtual environment, as each time you need it, use the command:
 
 ```bash
 source env/bin/activate
 ```
 
-To deactivate this virtual environment, simply type: `deactivate`
+To deactivate this virtual environment, just type: `deactivate`
 
-- With this virtual *environment activated*, we can install all the dependency with the command:
+- With this virtual environment activated, we can install all the dependencies with the command:
 
 ```bash
 python3 -m pip install --upgrade pip
@@ -123,77 +127,107 @@ python3 -m pip install -r requirements.txt
 ```bash
 python3 tp_rob201/main.py
 ```
+If everything went well, you should see a map with a robot that does not move.
 
-## Python IDE
+# Installation on Windows 10/11 with WSL2
 
-Although not mandatory, it is a good idea to use an IDE to code in *Python*. It makes programming easier.
+It's still **very experimental and untested**, but it seems possible to install *ensta-rob201* on WSL2 on Windows.
+For this to work, certain points need to be checked:
+- Use WSL 2 and not WSL 1,
+- Have Windows 11 or Windows 10 with the latest updates,
+- Update with the latest graphics card drivers, and reboot,
+- Use Ubuntu 24.04 (doesn't work on 22.04 or less) for WSL.
 
-For example, you can use the free *community* version of [*PyCharm*](https://www.jetbrains.com/pycharm/), or [*Visual Studio Code*](https://code.visualstudio.com/). In this case, you have to set your *interpreter* path to your venv path to make it work.
+Then simply follow the Ubuntu installation instructions: [Installation on Ubuntu (recommended)](#installation-on-ubuntu-recommended)
 
-# Detailed installation on Windows 10
+> [!NOTE]
+> To be more precise, there's no need to install a driver for the graphics card under WSL. WSL uses the Windows driver via a virtual graphics driver. OpenGL, necessary for ensta-rob201's operation, is managed by the Mesa library. The Mesa version of Ubuntu 22 on WSL does not support OpenGL 4.4 as required.
 
-This installation procedure has been tested with Windows 10. Installation is also straightforward on Windows 11.
+# Installation on Windows 10/11 with GitBash
 
-It would be tempting to install the program with WSL on Windows 10 (Ubuntu console), but this does not work because the program uses shaders with opengl and there is a version problem.
+This installation procedure has been tested on Windows 10 (a build number ending in 2311 or higher) and Windows 11.
+
+## **Warning** for Windows users
+
+**Many problems have been reported by Windows users**, ranging from strange behavior to program failure!
+
+Sometimes it's hard to spot the problem. For example, we've had people report cases where the lidar went through walls or the semantic sensor continued to detect the wounded even though he was “grasped”...
+
+*ensta-rob201* uses OpenGL via shaders to speed up calculations, and this always seems to be the case. The calculations for emulating the lidar and semantic sensors of the drones are performed, via these shaders, directly on the GPU.
+
+At the moment, we have noticed these problems with some Windows users. It's probably a problem with the graphics driver or the way Windows handles OpenGL.
+
+The problem doesn't seem to occur on Ubuntu. On some "more powerful" Windows machines (desktop), it also works correctly.
+
+First things first:
+- Have Windows 11 or Windows 10 with the latest updates,
+- Update your graphics card drivers, and reboot,
+- Check the *performance options* of your OS.
+
+If problems persist, you have several solutions:
+- Change your machine,
+- Change to Ubuntu operating system,
+- Use the manipulation describe here: [Deactivation of OpenGL shaders](#deactivation-of-opengl-shaders)
 
 ## *Python* installation
 
-- Open this link in your web browser:  https://www.python.org/downloads/windows/
-- Don't choose the latest version of Python, but choose the 3.8 version. Currently (11/2022), it is the ["*Python 3.8.10 - May 3, 2021*"](https://www.python.org/ftp/python/3.8.10/python-3.8.10-amd64.exe).
-- For modern machine, you have to choose the *Windows x86-64 executable installer*.
+- Open the following link in your web browser: https://www.python.org/downloads/windows/
+- The program will **not** work with a Python version greater than or equal to 12.
+- Don't choose the latest version of Python, but choose version 3.11.9. Currently (10/2023), it is "*Python 3.11.9 - April 2, 2024*".
+- For modern machines, you must select the *Windows installer (64-bit)*.
 - Once the installer is downloaded, run the Python installer.
-- **Important** : you should check the "**Add Python 3.8 to path**"  check box to include the interpreter in the execution path.
+- **Important**: you need to check the "**Add python.exe to path**" check box to include the interpreter in the execution path.
 
 ## *Git* installation
 
-Git is a tool for source code management. [Git is used](https://www.simplilearn.com/tutorials/git-tutorial/what-is-git "Git is used") to tracking changes in the source code of *place-bot*.
+Git is a source code management tool. [Git is being used](https://www.simplilearn.com/tutorials/git-tutorial/what-is-git) to track changes in the *ensta-rob201* source code.
 
- - Download the [latest version of    Git](https://git-scm.com/download/win) and choose the 64/32 bit version.
- - After the file is downloaded, install it in the system with the default options.
- - Once installed, select *Launch the Git Bash*, then click on *finish*. The *Git Bash* is now launched.
+ - Download the [latest version of Git](https://git-scm.com/download/win) and select the "64-bit Git for Windows Setup" version.
+ - Once the file has been downloaded, install it on your system with the default configuration.
+ - Once installed, select *Launch Git Bash*, then click on *finish*. The *Git Bash* is now launched.
 
-We want to work later on the project by using the *Git Bash* terminal.
+We will use the *Git Bash* terminal to work on the project later.
 
 ## Configure *Git Bash*
 
-- Launch the *Git Bash* terminal
-- **Warning**, you are **not** by default to your home directory. So to go there, just type : *cd*
-- To facilitate the use of the command *python*, you have to create an alias to real position of the program python.exe : `echo "alias python='winpty python.exe'" >> ~/.bashrc`
-- Then `source .bashrc` to activate the modification.
-- If things are working, the command `python -V` should give the version of the python installed, for example: `Python 3.8.10`
+- Run the *Git Bash* terminal.
+- **Warning**, by default you may **not** be in your home directory. So to get there, just type `cd`.
+- To facilitate the use of the *python* command, you need to create an alias for the real location of the python.exe program: `echo "alias python='winpty python.exe'" >> ~/.bashrc`.
+- Then `source .bashrc` to activate the change.
+- If everything works, the command `python --version` should show the installed Python version, for example: `Python 3.11.9`.
 
 ## Install this *ensta-rob201* repository
 
-- To install this git repository, we create a new directory where you will work in (for example: *~/code/*).
-- With *Git Bash*, you have to use the linux command, for example:
+- To install this git repository, go to the directory you want to work in (for example: *~/code/*).
+- With *Git Bash*, you have to use those Linux commands, for example:
 ```bash
 cd
 mkdir code
 cd code
 ```
-- Git-clone the code of [*ensta-rob201*](https://github.com/emmanuel-battesti/ensta-rob201):
+- Git-clone the code from [*ensta-rob201*](https://github.com/emmanuel-battesti/ensta-rob201):
 
 ```bash
 git clone https://github.com/emmanuel-battesti/ensta-rob201.git
 ```
 This command will create the directory *ensta-rob201* with all the code inside it.
 
-- Create your virtual environment. This command will create a directory *env* where all dependencies will be installed:
+- Create your virtual environment. This command will create a *.venv* directory where all dependencies will be installed:
 
 ```bash
 cd ensta-rob201
-python -m venv env
+python -m venv .venv
 ```
 
-- To use this newly create virtual environment, as each time you need it, use the command:
+- To use this newly created virtual environment, as each time you need it, use the command:
 
 ```bash
-source env/Scripts/activate
+source .venv/Scripts/activate
 ```
 
-Later, if you need it, to deactivate this virtual environment, simply type: `deactivate`
+To deactivate this virtual environment, just type: `deactivate`
 
-- With this virtual environment activated, we can install all the dependency with the command:
+- With this virtual environment activated, we can install all the dependencies with the command:
 
 ```bash
 python -m pip install --upgrade pip
@@ -207,3 +241,42 @@ python tp_rob201/main.py
 ```
 
 If everything went well, you should see a map with a robot that does not move.
+
+# Troubleshootings
+
+## Find OpenGL version on Ubuntu
+
+Under Linux or WSL2, you can find out which version of OpenGL is supported with *glxinfo*.
+
+Install *glxinfo*:
+```bash
+sudo apt update
+sudo apt install mesa-utils
+```
+
+Use *glxinfo*:
+```bash
+glxinfo | grep "OpenGL version"
+```
+
+## Update Mesa
+
+Under Linux or WSL2, to update the Mesa library to the lastest (but not-official) version:
+```bash
+sudo add-apt-repository ppa:kisak/kisak-mesa
+sudo apt update
+sudo apt upgrade
+```
+
+# Python IDE
+
+Although not required, it is a good idea to use an IDE when programming in *Python*. It makes programming easier.
+
+For example, you can use the free *community* version of [*PyCharm*](https://www.jetbrains.com/pycharm/). In this case, you will need to set your *interpreter* path to your venv path for it to work. 
+
+# Contact
+
+If you have questions about the code and installation, you can contact:
+
+emmanuel . battesti at ensta . fr
+

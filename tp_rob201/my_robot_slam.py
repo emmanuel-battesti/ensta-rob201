@@ -4,9 +4,9 @@ Complete controller including SLAM, planning, path following
 """
 import numpy as np
 
-from place_bot.entities.robot_abstract import RobotAbstract
-from place_bot.entities.odometer import OdometerParams
-from place_bot.entities.lidar import LidarParams
+from place_bot.simulation.robot.robot_abstract import RobotAbstract
+from place_bot.simulation.robot.odometer import OdometerParams
+from place_bot.simulation.ray_sensors.lidar import LidarParams
 
 from tiny_slam import TinySlam
 
@@ -23,8 +23,7 @@ class MyRobotSlam(RobotAbstract):
                  lidar_params: LidarParams = LidarParams(),
                  odometer_params: OdometerParams = OdometerParams()):
         # Passing parameter to parent class
-        super().__init__(should_display_lidar=False,
-                         lidar_params=lidar_params,
+        super().__init__(lidar_params=lidar_params,
                          odometer_params=odometer_params)
 
         # step counter to deal with init and display

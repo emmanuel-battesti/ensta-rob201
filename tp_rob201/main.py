@@ -1,8 +1,8 @@
 """ A simple SLAM demonstration using the "placebot" robot simulator """
 
-from place_bot.entities.lidar import LidarParams
-from place_bot.entities.odometer import OdometerParams
-from place_bot.simu_world.simulator import Simulator
+from place_bot.simulation.ray_sensors.lidar import LidarParams
+from place_bot.simulation.robot.odometer import OdometerParams
+from place_bot.simulation.gui_map.simulator import Simulator
 
 from my_robot_slam import MyRobotSlam
 

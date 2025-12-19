@@ -2,9 +2,9 @@ import math
 import random
 from typing import Type, Union
 
-from place_bot.entities.robot_abstract import RobotAbstract
-from place_bot.simu_world.closed_playground import ClosedPlayground
-from place_bot.simu_world.world_abstract import WorldAbstract
+from place_bot.simulation.robot.robot_abstract import RobotAbstract
+from place_bot.simulation.gui_map.closed_playground import ClosedPlayground
+from place_bot.simulation.gui_map.world_abstract import WorldAbstract
 
 from worlds import walls_my_world
 

@@ -1,2 +1,2 @@
-place-bot @ git+https://github.com/emmanuel-battesti/place-bot.git@main#egg=place-bot
+place-bot @ git+https://github.com/emmanuel-battesti/place-bot.git@v1.2.0
 #-e /home/battesti/projetRobotMobile/place-bot

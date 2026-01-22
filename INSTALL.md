@@ -110,7 +110,7 @@ python3 -m venv .venv
 - To use this newly created virtual environment, as each time you need it, use the command:
 
 ```bash
-source env/bin/activate
+source .venv/bin/activate
 ```
 
 To deactivate this virtual environment, just type: `deactivate`

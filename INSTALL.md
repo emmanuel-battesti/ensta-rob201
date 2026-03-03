@@ -66,7 +66,7 @@ We need, at least, *Python 3.8*, which is the default version of *Python* on *Ub
 
 ```bash
 sudo apt update
-sudo apt install python3 python3-venv python3-dev python3-pip 
+sudo apt install python3 python3-venv python3-dev python3-pip python3-tk
 ```
 You can verify the version with the command:
 ```bash
